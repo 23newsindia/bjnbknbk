@@ -6,6 +6,20 @@ if (!defined('ABSPATH')) {
 add_shortcode('newsletter_unsubscribe', 'wns_render_unsubscribe_form');
 
 function wns_render_unsubscribe_form() {
+    // Don't render during REST API requests or admin AJAX calls
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        return '';
+    }
+    
+    if (defined('DOING_AJAX') && DOING_AJAX) {
+        return '';
+    }
+    
+    // Don't render in admin context unless specifically requested
+    if (is_admin() && !wp_doing_ajax()) {
+        return '';
+    }
+
     ob_start();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wns_unsubscribe_email'])) {
@@ -31,6 +45,11 @@ function wns_render_unsubscribe_form() {
 }
 
 function wns_handle_unsubscribe($email) {
+    // Don't process during REST API requests
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        return false;
+    }
+
     global $wpdb;
 
     if (!is_email($email)) {

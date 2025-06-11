@@ -3,7 +3,7 @@
  * Plugin Name: WP Newsletter Subscription
  * Plugin URI: https://example.com/wp-newsletter-subscription 
  * Description: A simple newsletter subscription system with email verification, import/export, and scheduled mail sending.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Your Name
  * Author URI: https://example.com 
  * Text Domain: wp-newsletter-subscription
@@ -63,6 +63,11 @@ require_once WNS_PLUGIN_DIR . 'includes/cleanup.php';
 add_action('init', 'wns_ensure_tables_exist');
 
 function wns_ensure_tables_exist() {
+    // Don't run during REST API requests to avoid interference
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        return;
+    }
+    
     global $wpdb;
     
     $subscriber_table = $wpdb->prefix . 'newsletter_subscribers';
@@ -75,4 +80,17 @@ function wns_ensure_tables_exist() {
     if (!$subscriber_exists || !$queue_exists) {
         wns_install_subscriber_table();
     }
+}
+
+// Add filter to prevent shortcode processing during REST API requests
+add_filter('do_shortcode_tag', 'wns_filter_shortcodes_during_rest', 10, 4);
+
+function wns_filter_shortcodes_during_rest($output, $tag, $attr, $m) {
+    // Skip our shortcodes during REST API requests
+    if ((defined('REST_REQUEST') && REST_REQUEST) || (defined('DOING_AJAX') && DOING_AJAX)) {
+        if (in_array($tag, array('newsletter_subscribe', 'newsletter_unsubscribe'))) {
+            return '';
+        }
+    }
+    return $output;
 }
