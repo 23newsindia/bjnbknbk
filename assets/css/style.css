@@ -1,0 +1,47 @@
+.wns-subscribe-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.wns-subscribe-form input[type="email"] {
+    width: calc(100% - 100px);
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.wns-subscribe-form button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #0073aa;
+    color: white;
+    font-weight: bold;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.wns-subscribe-form button:hover {
+    background-color: #005b8d;
+}
+
+.wns-message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid #0073aa;
+    background-color: #f7fbfc;
+}
+
+.wns-message.success {
+    border-color: green;
+    color: green;
+}
+
+.wns-message.error {
+    border-color: red;
+    color: red;
+}
