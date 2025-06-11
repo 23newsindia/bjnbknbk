@@ -3,8 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-add_action('admin_menu', 'wns_add_broadcast_page');
-
+// Function is called from admin-menu.php, no need to add_action here
 function wns_add_broadcast_page() {
     add_submenu_page(
         'wns-settings',

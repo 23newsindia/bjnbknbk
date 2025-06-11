@@ -33,21 +33,20 @@ register_uninstall_hook(__FILE__, 'wns_uninstall_plugin');
 require_once WNS_PLUGIN_DIR . 'includes/install.php';
 require_once WNS_PLUGIN_DIR . 'includes/activation.php';
 
-// Admin includes
+// Admin includes - Load in proper order
 require_once WNS_PLUGIN_DIR . 'includes/admin/settings-page.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/subscriber-list-page.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/class-wns-subscriber-list-table.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/subscriber-list-view.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/import-export-page.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/unverified-notice.php';
-require_once WNS_PLUGIN_DIR . 'includes/admin/post-notification-settings.php';
-require_once WNS_PLUGIN_DIR . 'includes/admin/rate-limit-settings.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/broadcast-page.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/broadcast-handler.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/broadcast-view.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/email-queue-page.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/class-wns-email-queue-list-table.php';
 require_once WNS_PLUGIN_DIR . 'includes/admin/email-queue-view.php';
+require_once WNS_PLUGIN_DIR . 'includes/admin/admin-menu.php';
 
 // Frontend includes
 require_once WNS_PLUGIN_DIR . 'includes/subscription-form.php';
@@ -59,3 +58,21 @@ require_once WNS_PLUGIN_DIR . 'includes/unsubscribe-handler.php';
 require_once WNS_PLUGIN_DIR . 'includes/new-post-notification.php';
 require_once WNS_PLUGIN_DIR . 'includes/batch-email-handler.php';
 require_once WNS_PLUGIN_DIR . 'includes/cleanup.php';
+
+// Force table creation on plugin load if they don't exist
+add_action('init', 'wns_ensure_tables_exist');
+
+function wns_ensure_tables_exist() {
+    global $wpdb;
+    
+    $subscriber_table = $wpdb->prefix . 'newsletter_subscribers';
+    $queue_table = $wpdb->prefix . 'newsletter_email_queue';
+    
+    // Check if tables exist
+    $subscriber_exists = $wpdb->get_var("SHOW TABLES LIKE '$subscriber_table'") == $subscriber_table;
+    $queue_exists = $wpdb->get_var("SHOW TABLES LIKE '$queue_table'") == $queue_table;
+    
+    if (!$subscriber_exists || !$queue_exists) {
+        wns_install_subscriber_table();
+    }
+}

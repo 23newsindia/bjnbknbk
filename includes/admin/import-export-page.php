@@ -3,8 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-add_action('admin_menu', 'wns_add_import_export_page');
-
+// Function is called from admin-menu.php, no need to add_action here
 function wns_add_import_export_page() {
     add_submenu_page(
         'wns-settings',
@@ -65,7 +64,7 @@ function wns_render_import_export_page() {
             <input type="file" name="subscriber_csv" accept=".csv" required />
             <p class="description"><?php _e('CSV must have one column with header "email".', 'wp-newsletter-subscription'); ?></p>
             <br />
-            <button type="submit" class="button button-primary"><?php _e('Import Subscribers', 'wp-newsletter-subscription'); ?></button>
+            <button type="submit" name="import_subscribers" class="button button-primary"><?php _e('Import Subscribers', 'wp-newsletter-subscription'); ?></button>
         </form>
     </div>
     <?php

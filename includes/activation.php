@@ -32,4 +32,23 @@ function wns_uninstall_plugin() {
     delete_option('wns_email_batch_size');
     delete_option('wns_email_send_interval_minutes');
     delete_option('wns_unsubscribe_page_id');
+    delete_option('wns_db_version');
+}
+
+// Check if tables exist on every admin page load and create if missing
+add_action('admin_init', 'wns_check_database_tables');
+
+function wns_check_database_tables() {
+    global $wpdb;
+    
+    $subscriber_table = $wpdb->prefix . 'newsletter_subscribers';
+    $queue_table = $wpdb->prefix . 'newsletter_email_queue';
+    
+    // Check if tables exist
+    $subscriber_exists = $wpdb->get_var("SHOW TABLES LIKE '$subscriber_table'") == $subscriber_table;
+    $queue_exists = $wpdb->get_var("SHOW TABLES LIKE '$queue_table'") == $queue_table;
+    
+    if (!$subscriber_exists || !$queue_exists) {
+        wns_install_subscriber_table();
+    }
 }
